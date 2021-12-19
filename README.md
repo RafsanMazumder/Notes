@@ -116,7 +116,7 @@ When a user visits a website, a CDN server closest to the user will deliver stat
     * Invalidate the CDN object using APIs provided by CDN vendors.
     * Use object versioning to serve a different version of the object. To version an object, you can add a parameter to the URL, such as version number. For example, version number 2 is added to the query string: image.png?v=2
 
-After cache and CDN are added, we achieve this following design:
+After cache and CDN are added, we achieve this following design:<br/><br/>
 ![CDN & Cache](cdn_cache.drawio.svg)
 ## Stateless Web Tier
 ## Data Centres
