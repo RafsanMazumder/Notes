@@ -97,6 +97,27 @@ After receiving a request, a web server first checks if the cache has the availa
 * Mitigating failures: A single cache server represents a single point of failure (SPOF). As a result, multiple cache servers across different data centres are recommended to avoid SPOF. 
 * Eviction Policy: Once the cache is full, any requests to add items to the cache might cause existing items to be removed. This is called cache eviction. Least recently used (LRU) is the most popular cache eviction policy. 
 ## Content Delivery Network (CDN)
+A CDN is a network of geographically dispersed servers used to deliver static content. CDN servers cache static content like images, videos, CSS, javascript files etc. <br/><br/>
+When a user visits a website, a CDN server closest to the user will deliver static content. Intuitively, the further users are from CDN servers, the slower the website loads. This figure shows how CDN improves load time.  <br/><br/>
+![CDN](cdn.drawio.svg)
+<br/><br/>
+### Flow
+1. User A tries to get image.png by using an image URL. The URL's domain is provided by the CDN provider. e.g. https://mysite.cloudfront.net/image.jpg
+2. If the CDN server does not have image.png in the cache, the CDN server requests the file from origin, which can be a web server or online storage like Amazon S3. 
+3. The origin returns image.png to the CDN server, which includes optional HTTP header Time-to-Live (TTL) which describes how long the image is cached. 
+4. The CDN caches the image and returns it to user A. The image remains cached in CDN until the TTL expires. 
+5. User B sends a request to get the same image. 
+6. The image is returned from the cache as long as the TTL has not expired. 
+### Considerations of using a CDN
+* Cost: CDNs are run by third party providers, and you are charged for data transfers in and out of the CDN. Caching infrequently used assests provide no significant benefits, so you should consider moving them out of the CDN.
+* Setting an appropriate cache expiry: For time-sensitive content, setting a cache expiry time is important. The cache expiry time should neither be too long nor too short. If it is too long, the content might no longer be fresh. If it is too short, it can cause repeat reloading of conent from origin servers to the CDN. 
+* CDN fallback: You should consider how your website/application copes with CDN failure. If there is a temporary CDN outage, clients should be able to detect the problem and request resources from the origin.
+* Invalidating files: You can remove a file from CDN before it expires by performing one of the following operations:
+    * Invalidate the CDN object using APIs provided by CDN vendors.
+    * Use object versioning to serve a different version of the object. To version an object, you can add a parameter to the URL, such as version number. For example, version number 2 is added to the query string: image.png?v=2
+
+After cache and CDN are added, we achieve this following design:
+![CDN & Cache](cdn_cache.drawio.svg)
 ## Stateless Web Tier
 ## Data Centres
 ## Message Queue
