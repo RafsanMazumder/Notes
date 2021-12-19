@@ -72,6 +72,19 @@ With this architecture, we solved no failover issue and improved availability of
 * If server 1 goes offline, all the traffic will be routed to server 2, 3 & 4. This prevents the website from going offline.
 * If the website traffic grows rapidly, and four servers are not enough to handle the traffic, the load balancer can handle this problem gracefully. We only need to add more servers to the web server pool, and the load balancer automatically starts to send requests to them.
 ## Database Replication
+Database replication can be used in many database management
+systems, usually with a master/slave relationship between the original (master) and the copies
+(slaves). <br/><br/>
+![Database Replication](database_replication.drawio.svg)
+<br></br>
+A master database generally only supports write operations. A slave database gets copies of the data from the master database and generally only supports reads operations. All the data-modifying commands like insert, delete or update must be sent to the master database. Most applications require a much higher ratio of reads to writes. Thus the number of slave databases in a system is usually larger than the number of master databases. 
+### Advantages of Database Replication
+* Better Performance: All writes and updates happen in master nodes, whereas read operations are distributed across slave nodes. This improves performance because it allows more queries to be processed in parallel. 
+* Reliability: If one of your database servers is destroyed by natural disaster, data is still preserved, as data is replicated across different locations. 
+* High availability: By replicating data across different locations, your website remains in operations, even if a database is offline as you can access data stored in another database server. 
+### What is one of the databases goes offline?
+* If only one slave database is available and it goes offline, read operations will be redirected to the master database temporarily. As soon as the issue is found, a new slave database will replace the old one. In case multiple slave databases are available, read operations are redirected to other healthy slave databases. A new database server replace the old one. 
+* If the master database goes offline, a slave database will be prompted to be the new master. All the database operations will be temporarily executed on the new master database. A new slave database will replace the old one immediately. In production systems, promoting a new master is more complicated as the data in a slave database might not be up to date. The missing data needs to be updated by running data recovery scripts. There are some other replication methods, that could help: Multi masters and Circular replication. 
 ## Cache
 ## Content Delivery Network (CDN)
 ## Stateless Web Tier
