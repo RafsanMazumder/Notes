@@ -61,6 +61,16 @@ single server.
 * Vertical scaling does not have failover and redundancy. If one server goes down, the
 website/app goes down with it completely.
 ## Load Balancer
+A load balancer evenly distributes incoming traffic among web servers that are defined in a
+load-balanced set.<br/><br/>
+![Load Balancer](load_balancer.drawio.svg)
+Users connect to the public IP of the load balancer directly. For better security, private
+IPs are used for communication between servers. A private IP is an IP address reachable only
+between servers in the same network.
+<br/><br/>
+With this architecture, we solved no failover issue and improved availability of the web tier. <br/>
+* If server 1 goes offline, all the traffic will be routed to server 2, 3 & 4. This prevents the website from going offline.
+* If the website traffic grows rapidly, and four servers are not enough to handle the traffic, the load balancer can handle this problem gracefully. We only need to add more servers to the web server pool, and the load balancer automatically starts to send requests to them.
 ## Database Replication
 ## Cache
 ## Content Delivery Network (CDN)
