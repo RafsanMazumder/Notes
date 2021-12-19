@@ -86,6 +86,16 @@ A master database generally only supports write operations. A slave database get
 * If only one slave database is available and it goes offline, read operations will be redirected to the master database temporarily. As soon as the issue is found, a new slave database will replace the old one. In case multiple slave databases are available, read operations are redirected to other healthy slave databases. A new database server replace the old one. 
 * If the master database goes offline, a slave database will be prompted to be the new master. All the database operations will be temporarily executed on the new master database. A new slave database will replace the old one immediately. In production systems, promoting a new master is more complicated as the data in a slave database might not be up to date. The missing data needs to be updated by running data recovery scripts. There are some other replication methods, that could help: Multi masters and Circular replication. 
 ## Cache
+A cache is a temporary storage area that stores the result of expensive responses or frequently accessed data in memory so that subsequent requests are served more quickly. Every time a new web page loads, one or more database calls are executed to fetch data. The application performance is greatly affected by calling the database repeatedly. <br/><br/>
+![Cache Tier](cache_tier.drawio.svg)
+<br/><br/>
+After receiving a request, a web server first checks if the cache has the available response. If it has, it sends data back to the client. If not, it queries the database, stores the response in cache, and sends it back to the client. This caching strategy is called read-through cache. 
+### Considerations for using cache
+* When to use cache: Consider using cache, when data is read frequently but modified infrequently. Since cached data is stored in volatile memory, a cache server is not ideal for persisting data. For instance, if a cache server restarts, all the data in memory is lost. 
+* Expiration Policy: When there is no expiration policy, cached data will be stored in the memory permanently. It is advisable not to make the expiration date too short as this will cause the system to reload data from database too frequently. Meanwhile, it is advisable not to make the expiration date too long as the data can become stale. 
+* Consistency: This involves keeping the database layer and cache in sync. Inconsistency can happen because data modifying operations on the database layer and cache are not in a single transaction. 
+* Mitigating failures: A single cache server represents a single point of failure (SPOF). As a result, multiple cache servers across different data centres are recommended to avoid SPOF. 
+* Eviction Policy: Once the cache is full, any requests to add items to the cache might cause existing items to be removed. This is called cache eviction. Least recently used (LRU) is the most popular cache eviction policy. 
 ## Content Delivery Network (CDN)
 ## Stateless Web Tier
 ## Data Centres
