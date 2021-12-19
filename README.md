@@ -82,7 +82,7 @@ A master database generally only supports write operations. A slave database get
 * Better Performance: All writes and updates happen in master nodes, whereas read operations are distributed across slave nodes. This improves performance because it allows more queries to be processed in parallel. 
 * Reliability: If one of your database servers is destroyed by natural disaster, data is still preserved, as data is replicated across different locations. 
 * High availability: By replicating data across different locations, your website remains in operations, even if a database is offline as you can access data stored in another database server. 
-### What is one of the databases goes offline?
+### What if one of the databases goes offline?
 * If only one slave database is available and it goes offline, read operations will be redirected to the master database temporarily. As soon as the issue is found, a new slave database will replace the old one. In case multiple slave databases are available, read operations are redirected to other healthy slave databases. A new database server replace the old one. 
 * If the master database goes offline, a slave database will be prompted to be the new master. All the database operations will be temporarily executed on the new master database. A new slave database will replace the old one immediately. In production systems, promoting a new master is more complicated as the data in a slave database might not be up to date. The missing data needs to be updated by running data recovery scripts. There are some other replication methods, that could help: Multi masters and Circular replication. 
 ## Cache
