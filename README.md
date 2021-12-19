@@ -36,6 +36,30 @@ GET /users/12 – Retrieve user object for id = 12
 }
 ```
 ## Database
+With the growth of the user base, one server is not enough, and we need multiple servers: one
+for web/mobile traffic, the other for the database. Separating web/mobile traffic
+(web tier) and database (data tier) servers allows them to be scaled independently.<br /><br />
+![Database](database.drawio.svg)
+### Which databases to use?
+Relational databases are also called a relational database management system (RDBMS) or SQL database. The most popular ones are MySQL, Oracle database, PostgreSQL etc. Relational databases represent and store data in tables and rows. You can perform join operations using SQL across different database tables. <br /><br /> 
+
+Non-relational databases are also called NoSQL databases. Popular ones are CouchDB, Neo4j, Cassandra, HBase, Amazon DynamoDB etc. These databases are grouped into four categories: key-value stores, graph stores, column stores and document stores. Join operations are generally not supported in non-relational databases. <br /><br /> 
+
+Non-relational databases might be the right choice if: <br/>
+* Application requires super low latency. 
+* Data are unstructured, or do not have any relational data.
+* Only need to serialize and deserialize data (JSON, XML, YAML etc.)
+* Need to store a massive amount of data.
+## Vertical Scaling vs Horizontal Scaling
+Vertical scaling, referred to as “scale up”, means the process of adding more power (CPU,
+RAM, etc.) to servers. Horizontal scaling, referred to as “scale-out”, allows to scale
+by adding more servers into your pool of resources.<br/><br/>
+When traffic is low, vertical scaling is a great option, and the simplicity of vertical scaling is
+its main advantage. Unfortunately, it comes with serious limitations.<br/>
+* Vertical scaling has a hard limit. It is impossible to add unlimited CPU and memory to a
+single server.
+* Vertical scaling does not have failover and redundancy. If one server goes down, the
+website/app goes down with it completely.
 ## Load Balancer
 ## Database Replication
 ## Cache
