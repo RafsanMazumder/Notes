@@ -28,15 +28,6 @@
     * Total storage = 20B * 100KB = 2PM
 * Read/Write ratio = 1:1
 
-## APIs
-We primarily need 2 basic APIs:
-1. Upload a file<br/>
-URL: https://api.example.com/files/upload<br/>
-Params: data = Local file to be uploaded
-2. Download a file<br/>
-URL: https://api.example.com/files/download<br/>
-Params: data = Download file path
-
 ## Uploading files in Chunks
 The non-functional requirements, including minimum bandwidth and minimum latency are both very important and is exactly why Google Drive and similar services choose to upload files in chunks rather than uploading a single large file.<br/>
 We may divide the file into smaller chunks to make it easier to upload. Details of chunks can be included in metadata. Naming of chunks can be done by the hash value of chunks content. This strategy will help us in many ways:
@@ -108,3 +99,28 @@ The Synchronization Service is the component that processes file updates made by
 ## Detailed Component Design Diagram
 
 ![Dropbox](dropbox.drawio.svg)
+## Upload Flow
+TBD
+## Download Flow
+TBD
+## Failure Handling
+* Load Balancer Failure: If a load balancer fails, the secondary would become active and
+pick up the traffic. Load balancers usually monitor each other using a heartbeat, a periodic
+signal sent between load balancers. A load balancer is considered as failed if it has not sent
+a heartbeat for some time.
+* Block Server Failure: If a block server fails, other servers pick up unfinished or pending
+jobs.
+* Cloud Storage Failure:  S3 buckets are replicated multiple times in different regions. If
+files are not available in one region, they can be fetched from different regions.
+* Metadata Cache Failure: Metadata cache servers are replicated multiple times. If one node
+goes down, you can still access other nodes to fetch data. We will bring up a new cache
+server to replace the failed one.
+* Metadata DB Failure: 
+    * Master down: : If the master is down, promote one of the slaves to act as a new master
+and bring up a new slave node.
+    * Slave down: If a slave is down, you can use another slave for read operations and bring another database server to replace the failed one.
+* Notification Server Failure: Every online user keeps a long poll connection with the
+notification server. Thus, each notification server is connected with many users. According
+to the Dropbox talk in 2012 [6], over 1 million connections are open per machine. If a
+server goes down, all the long poll connections are lost so clients must reconnect to a
+different server. 
