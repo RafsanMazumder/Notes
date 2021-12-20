@@ -76,8 +76,9 @@ Based on the above considerations, we can divide our client into four parts:
 2. Chunker: Will split the files into smaller pieces called chunks. It will also be responsible for reconstructing a file from its chunks. Our chunking algorithm will detect the parts of the files that have been modified by the user and only transfer those parts to the Cloud Storage. This will save us bandwidth and synchronization time.
 3. Watcher: Will monitor the local workspace folders and notify the Indexer of any action performed by the users, e.g. when users create, delete, or update files or folders. Watcher also listens to any changes happening on other clients that are broadcasted by Synchronization service.
 4. Indexer: Will process the events received from the Watcher and update the internal metadata database with information about the chunks of the modified files.
-<br/>
+
 ![Client](client.drawio.svg)
+
 ### Metadata Database
 The Metadata Database is responsible for maintaining the versioning and metadata information about files/chunks, users, and workspaces. The Metadata Database can be a relational database such as MySQL, or a NoSQL database. we just need to make sure we meet the data consistency. An example of sample metadata in JSON format:
 ```json
