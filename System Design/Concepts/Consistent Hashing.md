@@ -11,7 +11,7 @@ If you have a collection of n cache machines then a common way of load balancing
 ## Solution 
 ![Consistent Hashing](consistent_hashing_simple.png)
 <br/>
-The hash function actually maps objects and caches to a number range. This should be familiar to every Java programmer - the hashCode method on Object returns an int, which lies in the range -231 to 231-1. Imagine mapping this range into a circle so the values wrap around.<br/><br/>
+The hash function actually maps objects and caches to a number range. This should be familiar to every Java programmer - the hashCode method on Object returns an int, which lies in the range -2<sup>31</sup> to 2<sup>31</sup>-1>. Imagine mapping this range into a circle so the values wrap around.<br/><br/>
 To find which cache an object goes in, we move clockwise round the circle until we find a cache point. So in the diagram above, we see object 1 and 4 belong in cache A, object 2 belongs in cache B and object 3 belongs in cache C. Consider what happens if cache C is removed: object 3 now belongs in cache A, and all the other object mappings are unchanged. If then another cache D is added in the position marked it will take objects 3 and 4, leaving only object 1 belonging to A.
 
 ### Virtual Nodes
