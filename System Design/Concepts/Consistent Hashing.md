@@ -16,6 +16,7 @@ To find which cache an object goes in, we move clockwise round the circle until 
 
 ### Virtual Nodes
 ![Consistent Hashing](consistent_hashing.png)
+<br/><br/>
 This works well, except the size of the intervals assigned to each cache is pretty hit and miss. Since it is essentially random it is possible to have a very non-uniform distribution of objects between caches. The solution to this problem is to introduce the idea of "virtual nodes", which are replicas of cache points in the circle. So whenever we add a cache we create a number of points in the circle for it.
 ### Implementation
 In order for consistent hashing to be effective it is important to have a hash function that mixes well. Most implementations of Object's hashCode do not mix well - for example, they typically produce a restricted number of small integer values - so we have a HashFunction interface to allow a custom hash function to be used. MD5 hashes are recommended here.
