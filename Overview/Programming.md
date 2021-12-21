@@ -1,11 +1,51 @@
-### Solar System Exploration, 1950s – 1960s
-
-- [ ] Mercury
-- [x] Venus
-- [x] Earth (Orbit/Moon)
-- [x] Mars
-- [ ] Jupiter
-- [ ] Saturn
-- [ ] Uranus
-- [ ] Neptune
-- [ ] Comet Haley
+# Java
+- [ ] Head First Java
+    - [ ] Breaking the Surface
+    - [ ] A Trip to Objectville
+    - [ ] Know Your Variables
+    - [ ] How Objects Behave
+    - [ ] Extra-Strength Methods
+    - [ ] Using the Java Library
+    - [ ] Better Living in Objectville
+    - [ ] Serious Polymorphism
+    - [ ] Life and Death of an Object
+    - [ ] Numbers Matter
+    - [ ] Risky Behaviour
+    - [ ] A Very Graphic Story
+    - [ ] Work on your Swing
+    - [ ] Saving Objects
+    - [ ] Make a Connection
+    - [ ] Data Structures
+    - [ ] Release Your Code
+    - [ ] Distributed Computing
+- [ ] Effective Java
+    - [ ] Introduction
+    - [ ] Creating and Destroying Objects
+    - [ ] Methods Common to All Objects
+    - [ ] Classes and Interfaces
+    - [ ] Generics
+    - [ ] Enums and Annotations
+    - [ ] Lambdas and Streams
+    - [ ] Methods
+    - [ ] General Programming
+    - [ ] Exceptions
+    - [ ] Concurrency
+    - [ ] Serialization
+- [ ] Java 8 in Action
+    - [ ] Java 8: why should you care?
+    - [ ] Passing code with behavior parameterization
+    - [ ] Lambda expressions
+    - [ ] Introducing streams
+    - [ ] Working with streams
+    - [ ] Collecting data with streams
+    - [ ] Parallel data processing and performance
+    - [ ] Refactoring, testing, and debugging
+    - [ ] Default methods
+    - [ ] Using Optional as a better alternative to null
+    - [ ] CompletableFuture: composable asynchronous programming
+    - [ ] New Date and Time API
+    - [ ] Thinking functionally
+    - [ ] Functional programming techniques
+    - [ ] Blending OOP and FP: comparing Java 8 and Scala
+    - [ ] Conclusions and where next for Java
+    
