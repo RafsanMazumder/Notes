@@ -61,3 +61,71 @@ class Car extends Vehicle {
 ```
 ## Is JVM compiler or interpreter?
 JVM runs/interprets/translates bytecode into native machine code. JVM is interpreter.
+
+## [Chapter-2] A Trip to Objectville
+### Difference between Class and Object
+* A class is a blueprint for an object. It tells the virtual machine to make an object of that particular type. 
+* Things an object knows about itself are called instance variables / state.
+* Things an object can do are called methods.
+
+### Garbage Collectible Heap
+Each time an object is created in Java, it goes into an area of memory known as the 'the heap'. All objects no matter when, where or how they're created, live on the heap. The Java heap is actually called the Garbage-Collectible Heap. When you create an object, Java allocates memory space on the heap according to how much that particular object needs.<br/><br/>
+When the JVM can 'see' that an object can never be used again, that object becomes eligible for garbage collection. And if you're runnning low on memory, the garbage collector will run, throw the unreachable objects, and free up the space, so that the space can be reused.
+
+### Global Variables & Constants
+* **public static** -> global variable
+* **public static final** -> global constant
+
+## [Chapter-3] Know Your Variables
+### Primitive and Reference Variables
+* Variables are of two types: primitive and reference
+* Variables must always be declared with a name and a type.
+* A primitive variable value is the bits representing the value.
+* A reference varibale value is the bits representing a way to get to an object on the heap.
+* A reference variable has a value of null when it is not referencing any object.
+* An array is always an object, even if the array is declared to hold primitives. 
+
+### Bit Depth of Primitive Types
+<table><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>Type</span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>Bit Depth</span></p></div></div></td></tr><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>boolean</span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>JVM specific</span></p></div></div></td></tr><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>char</span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>16 bits</span></p></div></div></td></tr><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>byte</span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>8 bits</span></p></div></div></td></tr><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>short</span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>16 bits</span></p></div></div></td></tr><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>int</span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>32 bits</span></p></div></div></td></tr><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>long </span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>64 bits</span></p></div></div></td></tr><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>float </span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>32 bits</span></p></div></div></td></tr><tr><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>double </span></p></div></div></td><td class="selected" style="text-align: left; vertical-align: top;"><div class="wrap"><div class="" contenteditable="false" style="margin: 10px 5px;"><p><span>64 bits</span></p></div></div></td></tr></table>
+
+### 'f' Suffix for Float
+Floats should have 'f' suffix, because Java thinks anything with a floating point is a double, unless you use 'f'.
+
+### Type Casting
+#### Widening / Implicit casting
+Both types are compaitable and target type is larger than source type. 
+```java
+    byte i = 40;
+    short j = i;
+```
+#### Narrowing / Explicit casting
+Assigning a larget type to smaller type.
+```java
+    double d = 30.0;
+    float f = d;
+```
+
+### Variable Naming
+* Start with a letter, underscore(_) or dollar sign($). Can't start with number or other charcters. 
+* Cannot be reserved keywords. 
+
+### Size of Reference Variables
+All references for a given JVM will be the same size regardless of the objects they reference, but each 
+JVM might have a different way of representing references, so references on one JVM may be smaller or
+larger than references on another JVM.
+
+### Storing variables on Stack/Heap
+* All data for primitive type variables is stored on the stack.
+* For reference type, the stack holds a pointer to the object on the heap.
+* When setting a reference type variable equal to another reference type variable,
+a copy of only the pointer is made.
+* Certain object types (e.g. **Immutable**) can't be manipulated on the heap.
+
+```java
+    int a = 3;
+    int b = a;
+
+    int[] c = {1, 2, 3, 4};
+    int[] d = c;
+```
+![Storing Variables](storing.drawio.svg)
