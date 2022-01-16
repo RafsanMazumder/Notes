@@ -59,7 +59,7 @@ class Car extends Vehicle {
     }
 }
 ```
-## Is JVM compiler or interpreter?
+### Is JVM compiler or interpreter?
 JVM runs/interprets/translates bytecode into native machine code. JVM is interpreter.
 
 ## [Chapter-2] A Trip to Objectville
@@ -129,3 +129,27 @@ a copy of only the pointer is made.
     int[] d = c;
 ```
 ![Storing Variables](storing.drawio.svg)
+
+## [Chapter-4] How Objects Behave
+
+### Pass by value or pass by reference?
+Java is always pass by value
+
+### Do I have to return the exact type I declared?
+You can return anything that can be implicitly promoted to that type. You must use an explicit cast when
+ the declared type is smaller than what you're trying to return.
+
+### Encapsulation
+* Mark instance variables private
+* Mark getters and setters public
+
+### Instance and Local Variables
+* Instance variables are declared inside a class but not within a method.
+* Local variables are declared within a method. 
+* Local variables do not get a default value. So local variables must be initialized before use. 
+* Method parameters are the same as local variables, as they're declared inside the method.
+
+### Comparing Variables
+* **Primitives**: To comapre two primitives, use the **==** operator.
+* **References**: To see if two references are the same (which means if they refer to the same object on the heap)
+ use the **==** operator.
