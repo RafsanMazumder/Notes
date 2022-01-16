@@ -153,3 +153,97 @@ You can return anything that can be implicitly promoted to that type. You must u
 * **Primitives**: To comapre two primitives, use the **==** operator.
 * **References**: To see if two references are the same (which means if they refer to the same object on the heap)
  use the **==** operator.
+
+## [Chapter-6] Using the Java Library
+### Packages
+In the Java Libray/API, classes are grouped into packages. To use a class in the API, you have to know which package the class is in. 
+Every class in the Java library belongs to a package. 
+
+![Package](package.drawio.svg)
+
+### Why do we have to use the full name of a package?
+* Better organization of a project or library
+* Name scoping, to help prevent collisions
+* Level of security, because you can restrict the code you write so that only classes in the same package can access it. 
+
+### What does it mean when a package starts with **javax**?
+* In the first and second versions of Java, all classes that shipped with Java were in packages, that begin with **java**.
+e.g. **java.lang**, **java.util**, **java.net**
+* There are other packages not included in the standard library. These classes were known as extensions and two types: 
+Standard and non-standard. Standard extensions were those that **Sun** considered official, as opposed to experimental.
+* Standard extensions, by convention, all began with an **'x'** appended to the regular java package starter. e.g. **javax.swing**
+
+### **java.lang** package
+You must tell Java the full name of every class you use, unless that class is in the **java.lang** package. An import
+statement for the class is the easy way. Otherwise, you have to type the full name of the class, everywhere you use it.
+
+## [Chapter-7] Better Living in Objectville
+### What if JVM cannot find the method in the inheritence tree?
+The compiler gurantees that a particular method is callable for a specific reference type, but it doesn't say/care
+from which class that method actually comes from at runtime. 
+
+### Using both superclass & subclass method
+```java
+    public void roam() {
+        super.roam();
+        // my own roam stuff
+    }
+```
+
+### Subclass & Superclass
+* A subclass extends a superclass.
+* A subclass inherits all public instance variables and methods of the superclass, but does not inherit the private
+instance variables and methods of the superclass. 
+* Inherited methods can be overriden, but instance variables cannot be overriden (although they can be redefined in the subclass, 
+but that's not the same thing and there's almost never a need to do it).
+* The IS-A relationship works in only one direction.
+* When a method is overriden in a subclass, and that method is invoked on an instance of the subclass, the overriden version 
+of the method is called. 
+
+### When to use Inheritance
+* Do use inheritance when one class is a more specific type of a superclass.
+* Do consider inheritance when you have behaviour that should be shared among multiple classes of the same generatl type. Be aware, 
+however, that while inheritance is one of the key features of OOP, it's not necessarily the best way to achieve behaviour reuse. 
+Design patterns will help you see other more subtle and flexible options. 
+* Do not use inheritance just so that you can reuse code from another class, if the relationship between the superclass and subclass
+ violate either of the above two rules.
+* Do not use inheritance if the subclass and superclass do not pass the IS-A test. 
+
+### Advantages of Inheritance
+* Avoid duplicate code
+* Gurantee that all classes grouped under a certain supertype have all the methods that the supertype has. 
+* Get to take advantage of polymorphism. 
+
+### Polymorphism
+* With polymorphism, the reference type can be a superclass of the actual object type.
+```java
+    Animal myDog = new Dog();
+    // Animal (reference type) is a superclass of Dog 
+```
+* You can have polymorphic arguments and return types.
+* With polymorphism, you can write code that doesn't have to change when you introduce new subclass types into the program. 
+
+### Can you extend any class?
+There are three things that can prevent a class from being subclassed.
+1. **Access Control**: Even though a class can't be marked **private**, a class can be non-public (what you get, if you 
+don't declare the class as public). A non-public class can be subclassed only by classes in the same package as the class. 
+2. **final** Keyword Modifier: A final class mean that it's the end of the inheritance tree.
+3. **Private Constructor**: If a class only has private constructors, it can't be subclassed. 
+### Why would you ever want to make a final class?
+**Security**: The security of knowing that the methods will always work the way that you wrote them, because they can't be
+overriden. A lot of classes in the Java API are final for that reason. e.g. the **String** class.
+### Can you make a method final?
+If you want to protect a specific method from being overrident, mark the method with the **final** modifier. 
+
+### Rules for overriding method
+* Arguments must be the same, and return type must be the same type, or a subclass type.
+* The method can't be less accessible. 
+
+### Method overloading
+* Method overloading is nothing more than having two methods with the same name but different argument lists. 
+* There is no polymorphism involved with overloaded methods. 
+* An overloaded method is not the same as an overriden method. 
+
+### Rules for method overloading
+* The return types can be different, but can't change only return type.
+* You can vary the access levels in any direction. 
