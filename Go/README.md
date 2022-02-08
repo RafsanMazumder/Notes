@@ -364,7 +364,6 @@ Strings in Go are encoded with UTF-8, one of several encodings for Unicode code 
 
 ### Supporting other languages
 The first step to supporting other languages is to decode characters to the rune type before manipulating them. Fortunately, Go has functions and language features for decoding UTF-8 encoded strings.</br></br>
-
 The utf8 package provides functions to determine the length of a string in runes rather than bytes and to decode the first character of a string. The **DecodeRuneInString** function returns the first character and the number of bytes the character consumed.
 
 ```go
@@ -399,7 +398,6 @@ The Go language provides the **range** keyword to iterate over a variety of coll
 ## [Chapter-10] Converting between types
 ### Mixing types
 When presented with two or more different types, some programming languages make a best effort to guess the programmer’s intentions. Both JavaScript and PHP can subtract 1 from the string "10". Whereas the Go compiler rejects "10" - 1 with a mismatched types error.</br></br>
-
 Another example of mismatched types occurs when attempting a calculation with a mix of integer and floating-point types.
 ```go
     age := 41
@@ -463,9 +461,7 @@ The **strconv** package provides the **Atoi** function (ASCII to integer). Becau
 
 ### Static types
 In Go, once a variable is declared, it has a type and the type cannot be changed. This is known as static typing, which is easier for the compiler to optimize, so your programs run fast. But attempting to use a variable with a value of a different type will cause the Go compiler to report an error. </br></br>
-
 Languages such as JavaScript, Python, and Ruby use dynamic typing instead of static typing. In those languages, each value has an associated type, and variables can hold values of any type.</br></br>
-
 Go does have an escape hatch for situations where the type is uncertain. For example, the Println function will accept both strings and numeric types.
 
 ### Numeric equivalent of boolean
