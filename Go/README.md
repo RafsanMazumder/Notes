@@ -466,3 +466,185 @@ Go does have an escape hatch for situations where the type is uncertain. For exa
 
 ### Numeric equivalent of boolean
 In programming languages without a dedicated bool type, the values 1 and 0 often stand in for true and false, respectively. Booleans in Go don’t have a numeric equivalent.
+
+## [Chapter-12] Functions
+### Summary
+* In Go, the functions, variables, and other identifiers that begin with an uppercase letter are exported and become available to other packages. 
+* Parameter and argument are terms from mathematics, with a subtle distinction. A function accepts parameters and is invoked with arguments, though at times people may use the terms interchangeably.
+* Each parameter or result is a name followed by a type, though types may be elided when multiple named parameters or results have the same type. Results can also be listed as types without names.
+```go
+    func Unix(sec int64, nsec int64) Time
+    func Unix(sec, nsec int64) Time
+    func Atoi(s string) (i int, err error)
+    func Atoi(s string) (int, error)
+```
+* Function calls are prefixed with the name of the package where the function is declared, unless the function is declared in the same package it’s called from.
+* Functions are called with arguments that correspond to the parameters they accept. Results are returned to the caller with the **return** keyword.
+
+### Println function
+You can pass the **Println** function a variable number of arguments, a feature indicated by the ellipsis (...). There’s a special term for this: **Println** is said to be a variadic function. The parameter a is a collection of the arguments passed to the function.
+```go
+    func Println(a ...interface{}) (n int, err error)
+```
+The type of the a parameter is **interface{}**, known as the empty interface type. This special type is what enables **Println** to accept an **int**, **float64**, **string**, **time.Time**, or any other type without the Go compiler reporting an error. The combination of variadic functions and the empty interface, written together as **...interface{}**, means you can pass **Println** any number of arguments of any type.
+
+## [Chapter-13] Methods
+### Declaring new types
+The type keyword declares a new type with a name and an underlying type. 
+```go
+    type celsius float64
+    var temperature celsius = 20
+```
+The numeric literal 20, like all numeric literals, is an **untyped** constant. It can be assigned to a variable of type **int**, **float64**, or any other numeric type. The celsius type is a new numeric type with the same behavior and representation as a **float64**, so the assignment in the previous listing works.
+
+### Mismatched types
+Types can't be mixed. 
+```go
+    type celsius float64
+    var temperature celsius = 20
+
+    var warmUp float64 = 10
+    temperature += warmUp // Invalid operation: mismatched types
+```
+To add warmUp, it must first be converted to the celsius type. This version works:
+```go
+    var warmUp float64 = 10
+    temperature += celsius(warmUp)
+```
+
+### Methods
+Methods are like functions associated to a type by way of a receiver specified before the method name. Methods can accept multiple parameters and return multiple results, just like functions, but they must always have exactly one receiver. Within the method body, the receiver behaves just like any other parameter.
+```go
+    func kelvinToCelsius(k kelvin) celsius {
+        return celsius(k - 273.15)
+    }
+
+    func (k kelvin) celsius() celsius {
+        return celsius(k - 273.15)
+    }
+```
+
+### Calling methods
+The calling syntax for methods uses dot notation, with a variable of the appropriate type followed by a dot, the method name, and any arguments.
+```go
+    var k kelvin = 294.0
+    var c celsius
+
+    c = kelvinToCelsius(k)
+    c = k.celsius()
+```
+
+## [Chapter-14] First-class functions
+In Go you can assign functions to variables, pass functions to functions, and even write functions that return functions. Functions are first-class—they work in all the places that integers, strings, and other types work.
+
+
+### Assigning functions to variables
+Function and method calls always have parentheses (for example, fn()) whereas the function itself can be assigned by specifying a function name without parentheses.
+```go
+    type kelvin float64
+
+    func fakeSensor() kelvin {
+        return kelvin(rand.Intn(151) + 150)
+    }
+
+    func realSensor() kelvin {
+        return 0
+    }
+
+    func main() {
+        sensor := fakeSensor
+        fmt.Println(sensor())
+
+        sensor = realSensor
+        fmt.Println(sensor())
+    }
+```
+The **sensor** variable is of type function, where the function accepts no parameters and returns a **kelvin** result. When not relying on type inference, the sensor variable would be declared like this:
+```go
+    var sensor func() kelvin
+```
+
+### Passing functions to other functions
+```go
+    type kelvin float64
+
+    func measureTemperature(samples int, sensor func() kelvin) {
+        for i := 0; i < samples; i++ {
+            k := sensor()
+            fmt.Printf("%v° K\n", k)
+            time.Sleep(time.Second)
+        }
+    }
+
+    func fakeSensor() kelvin {
+        return kelvin(rand.Intn(151) + 150)
+    }
+
+    func main() {
+        measureTemperature(3, fakeSensor)
+    }
+```
+
+### Declaring function types
+```go
+    type sensor func() kelvin
+    func measureTemperature(samples int, s sensor)
+```
+
+### Anonymous functions
+An **anonymous function**, also called a **function literal** in Go, is a function without a name. Unlike regular functions, function literals are **closures** because they keep references to variables in the surrounding scope. </br> </br>
+You can assign an anonymous function to a variable and then use that variable like any other function.
+```go
+    func main() {
+        f := func(message string) {
+            fmt.Println(message)
+        }
+
+        f("Go to the party.")
+    }
+```
+
+You can even declare and invoke an anonymous function in one step.
+```go
+    func main() {
+        func() {
+            fmt.Println("Functions anonymous")
+        }()
+    }
+```
+
+### Closures
+```go
+    type kelvin float64
+
+    // sensor function type
+    type sensor func() kelvin
+
+    func realSensor() kelvin {
+        return 0
+    }
+
+    func calibrate(s sensor, offset kelvin) sensor {
+        return func() kelvin {
+            return s() + offset
+        }
+    }
+
+    func main() {
+        sensor := calibrate(realSensor, 5)
+        fmt.Println(sensor())
+    }
+```
+The anonymous function in the preceding listing makes use of closures. It references the s and offset variables that the calibrate function accepts as parameters. Even after the calibrate function returns, the variables captured by the closure survive, so calls to sensor still have access to those variables. The anonymous function encloses the variables in scope, which explains the term closure.</br></br>
+A closure keeps a **reference** to surrounding variables rather than a copy of their values, changes to those variables are reflected in calls to the anonymous function:
+```go
+    var k kelvin = 294.0
+
+    sensor := func() kelvin {
+        return k
+    }
+    fmt.Println(sensor()) // Prints 294
+
+    k++
+    fmt.Println(sensor()) // Prints 295
+```
