@@ -449,7 +449,7 @@ Another way to convert a number to a string is to use **Sprintf**, a cousin of P
     fmt.Println(str)
 ```
 
-### ASCII to Integer
+#### ASCII to Integer
 The **strconv** package provides the **Atoi** function (ASCII to integer). Because a string may contain gibberish or a number that’s too big, the **Atoi** function may return an error:
 ```go
     countdown, err := strconv.Atoi("10")
