@@ -648,3 +648,418 @@ A closure keeps a **reference** to surrounding variables rather than a copy of t
     k++
     fmt.Println(sensor()) // Prints 295
 ```
+
+## [Chapter-16] Arrayed in splendor
+### Declaring arrays and accessing their elements
+```go
+    var planets [8]string
+
+    planets[0] = "Mercury"
+    planets[1] = "Venus"
+    planets[2] = "Earth"
+```
+
+### Zero value
+Elements of an array are initially the zero value for the array’s type, which means 0 for integer arrays.
+
+### Initialize arrays with composite literals
+A composite literal is a concise syntax to initialize any composite type with the values you want. Rather than declare an array and assign elements one by one, Go’s composite literal syntax will declare and initialize an array in a single step.
+```go
+    dwarfs := [5]string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+```
+You can ask the Go compiler to count the number of elements in the composite literal by specifying the ellipsis **...** instead of a number. But the **trailing comma** is required.
+```go
+    planets := [...]string{
+        "Mercury",
+        "Venus",
+        "Earth",
+        "Mars",
+        "Jupiter",
+        "Saturn",
+        "Uranus",
+        "Neptune",
+    }
+```
+
+### Iterating through an array with range
+```go
+    dwarfs := [5]string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+
+    for i, dwarf := range dwarfs {
+        fmt.Println(i, dwarf)
+    }
+```
+You can use the blank identifier (underscore) if you don’t need the index variable provided by range.
+
+### Arrays are copied
+Assigning an array to a new variable or passing it to a function makes a complete copy of its contents. Arrays always pass by value.
+
+### Length is part of array's type
+It’s important to recognize that the length of an array is part of its type. The type **[8]string** and type **[5]string** are both collections of strings, but they’re two different types. The Go compiler will report an error when attempting to pass an array of a different length:
+
+```go
+    func terraform(planets [8]string) {
+        for i := range planets {
+            planets[i] = "New " + planets[i]
+        }
+    }
+
+    func main() {
+        dwarfs := [5]string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+        terraform(dwarfs) // Can’t use dwarfs (type [5]string) as type [8]string in argument to terraform
+    }
+```
+For these reasons, **arrays** aren’t used as function parameters nearly as often as **slices**.
+
+## [Chapter-17] Slices: windows into arrays
+### Slicing an array
+Slicing is expressed with a half-open range. 
+```go
+    planets := [...]string{
+        "Mercury",
+        "Venus",
+        "Earth",
+        "Mars",
+        "Jupiter",
+        "Saturn",
+        "Uranus",
+        "Neptune",
+    }
+
+    terrestrial := planets[0:4]
+    gasGiants := planets[4:6]
+    iceGiants := planets[6:8]
+```
+
+### Slicing a slice
+You can also slice an array, and then slice the resulting slice:
+```go
+    giants := planets[4:8]
+    gas := giants[0:2]
+    ice := giants[2:4]
+    fmt.Println(giants, gas, ice)
+```
+
+### Slice modifies underlying array
+Assigning a new value to an element of a slice modifies the underlying planets array. The change will be visible through the other slices:
+```go
+    planets := [...]string{
+        "Mercury",
+        "Venus",
+        "Earth",
+        "Mars",
+        "Jupiter",
+        "Saturn",
+        "Uranus",
+        "Neptune",
+    }
+
+    terrestrial := planets[0:4]
+    gasGiants := planets[4:6]
+    iceGiants := planets[6:8]    
+    iceGiantsMarkII := iceGiants
+    iceGiants[1] = "Poseidon"
+    fmt.Println(planets) // Prints [Mercury Venus Earth Mars Jupiter Saturn Uranus Poseidon]
+    fmt.Println(iceGiants, iceGiantsMarkII, ice) // Prints [Uranus Poseidon] [Uranus Poseidon] [Uranus Poseidon]
+```
+
+### Slicing strings
+The result of slicing a string is another string. Be aware that the indices indicate the number of bytes, not runes:
+```go
+    question := "¿Cómo estás?"
+    fmt.Println(question[:6]) // Prints ¿Cóm
+```
+
+### Declaring slice directly
+A slice of strings has the type **[]string**, with no value between the brackets. This differs from an array declaration, which always specifies a fixed length or ellipsis between the brackets.
+```go
+    dwarfs := []string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+```
+There is still an underlying array. Behind the scenes, Go declares a five-element array and then makes a slice that views all of its elements.
+
+### %T format verb with slice and array
+```go
+    dwarfArray := [5]string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+    dwarfs := []string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+
+    fmt.Printf("array %T\n", dwarfArray) // Prints array [5]string
+    fmt.Printf("slice %T\n", dwarfs) // Prints slice []string
+```
+
+### Slices vs arrays
+**Arrays** are rarely used directly. Gophers prefer **slices** for their versatility, especially when passing arguments to functions.
+
+## [Chapter-21] A little structure
+### Declaring a structure 
+```go
+    var curiosity struct {
+        lat  float64
+        long float64
+    }
+
+    curiosity.lat = -4.5895
+    curiosity.long = 137.4417
+
+    fmt.Println(curiosity.lat, curiosity.long) // Prints -4.5895 137.4417
+    fmt.Println(curiosity) // Prints {-4.5895 137.4417}
+```
+
+### Reusing structures with types
+```go
+    type location struct {
+        lat  float64
+        long float64
+    }
+
+    var spirit location
+    spirit.lat = -14.5684
+    spirit.long = 175.472636
+
+    var opportunity location
+    opportunity.lat = -1.9462
+    opportunity.long = 354.4734
+
+    fmt.Println(spirit, opportunity) // Prints {-14.5684 175.472636} {-1.9462 354.4734}
+```
+
+### Initialize structures with composite literals
+Composite literals for initializing structures come in two different forms.</br></br>
+Fields may be in any order, and fields that aren’t listed will retain the zero value for their type. This form tolerates change and will continue to work correctly even if fields are added to the structure or if fields are reordered.
+```go
+    type location struct {
+        lat, long float64
+    }
+
+    opportunity := location{lat: -1.9462, long: 354.4734}
+    fmt.Println(opportunity) // Prints {-1.9462 354.4734}
+
+    insight := location{lat: 4.5, long: 135.9}
+    fmt.Println(insight) // Prints {4.5 135.9}
+```
+Another form doesn't specify field names. Instead, a value must be provided for each field in the same order in which they’re listed in the structure definition. This form works best for types that are stable and only have a few fields.
+```go
+    spirit := location{-14.5684, 175.472636}
+    fmt.Println(spirit) // Prints {-14.5684 175.472636}
+```
+
+### Printing keys of structures
+You can modify the **%v** format verb with a plus sign + to print out the field names, as shown in the next listing.
+```go
+    curiosity := location{-4.5895, 137.4417}
+    fmt.Printf("%v\n", curiosity) // Prints {-4.5895 137.4417}
+    fmt.Printf("%+v\n", curiosity) // Prints {lat:-4.5895 long:137.4417}
+```
+
+### Structures are copied
+```go
+    bradbury := location{-4.5895, 137.4417}
+    curiosity := bradbury
+
+    curiosity.long += 0.0106
+
+    fmt.Println(bradbury, curiosity) // Prints {-4.5895 137.4417} {-4.5895 137.4523}
+```
+
+### Slice of structures
+A slice of structures, **[]struct** is a collection of zero or more values (a slice) where each value is based on a structure instead of a primitive type like float64.
+
+```go
+    type location struct {
+        name string
+        lat  float64
+        long float64
+    }
+
+    locations := []location{
+        {name: "Bradbury Landing", lat: -4.5895, long: 137.4417},
+        {name: "Columbia Memorial Station", lat: -14.5684, long: 175.472636},
+        {name: "Challenger Memorial Station", lat: -1.9462, long: 354.4734},
+    }
+```
+
+### Encoding structures to JSON
+JavaScript Object Notation, or JSON (json.org), is a standard data format. It’s based on a subset of the JavaScript language but it’s widely supported in other programming languages. JSON is commonly used for web APIs (Application Programming Interfaces). </br></br>
+The Marshal function from the json package is used to encode the data into JSON format. Marshal returns the JSON data as bytes, which can be sent over the wire or converted to a string for display.
+```go
+    type location struct {
+        Lat, Long float64
+    }
+
+    curiosity := location{-4.5895, 137.4417}
+
+    bytes, _ := json.Marshal(curiosity)
+
+    fmt.Println(string(bytes)) // Prints {“Lat”:-4.5895,“Long”:137.4417}
+```
+Notice that the JSON keys match the field names of the location structure. For this to work, the json package requires fields to be exported. If Lat and Long began with a lowercase letter, the output would be {}.
+
+### Customizing JSON with struct tags
+Go’s json package requires that fields have an initial uppercase letter and multiword field names use CamelCase by convention. You may want JSON keys in snake_case. The fields of a structure can be tagged with the field names you want the json package to use.
+```go
+    type location struct {
+        Lat  float64 `json:"latitude"`
+        Long float64 `json:"longitude"`
+    }
+
+    curiosity := location{-4.5895, 137.4417}
+
+    bytes, _ := json.Marshal(curiosity)
+
+    fmt.Println(string(bytes)) // Prints {“latitude”:-4.5895,“longitude”:137.4417}
+```
+Struct tags are ordinary strings associated with the fields of a structure. Raw string literals (``) are preferable, because quotation marks don’t need to be escaped with a backslash, as in the less readable **"json:\"latitude\""**.</br></br>
+To customize the Lat field for both JSON and XML, the struct tag would be **`json:"latitude" xml:"latitude"`**.
+
+## [Chapter-22] Go’s got no class
+### No classes
+The Go language has types, methods on types, and structures. Together, these provide much of the functionality that classes do for other languages, without needing to introduce a new concept into the language.
+
+### Attaching methods to structures
+```go
+    // coordinate in degrees, minutes, seconds in a N/S/E/W hemisphere.
+    type coordinate struct {
+        d, m, s float64
+        h       rune
+    }
+
+    // decimal converts a d/m/s coordinate to decimal degrees.
+    func (c coordinate) decimal() float64 {
+        sign := 1.0
+        switch c.h {
+        case 'S', 'W', 's', 'w':
+            sign = -1
+        }
+        return sign * (c.d + c.m/60 + c.s/3600)
+    }
+```
+
+### Constructor functions
+Classical languages provide constructors as a special language feature to construct objects. Python has **_init_**, Ruby has **initialize**, and PHP has **__construct()**. Go doesn’t have a language feature for constructors. Instead **newLocation** is an ordinary function with a name that follows a convention.
+```go
+    type location struct {
+        lat, long float64
+    }
+
+    // newLocation from latitude, longitude d/m/s coordinates.
+    func newLocation(lat, long coordinate) location {
+        return location{lat.decimal(), long.decimal()}
+    }    
+```
+Functions in the form **newType** or **NewType** are used to construct a value of said type. Whether you name it **newLocation** or **NewLocation** depends on whether the function is exported for other packages to use.</br></br>
+Sometimes constructor functions are named **New**, as is the case with the **New** function in the errors package. Because function calls are prefixed with the package they belong to, naming the function **NewError** would be read as **errors.NewError** rather than the more concise and preferable **errors.New**.
+
+## [Chapter-23] Composition and forwarding
+In the world of object-oriented programming, objects are composed of smaller objects in the same way. Computer scientists call this object composition or simply composition. Gophers use composition with structures, and Go provides a special language feature called embedding to forward methods.
+
+### Composition over inheritance
+Designing hierarchies can be difficult. A hierarchy of the animal kingdom would attempt to group animals with the same behaviors. Some mammals walk on land while others swim, yet blue whales also nurse their young. How would you organize them? It can be difficult to change hierarchies too, as even a small change can have a wide impact.</br></br>
+Composition is a far simpler and more flexible approach: implement walking, swimming, nursing, and other behaviors and associate the appropriate ones with each animal.
+
+### Composing structures
+```go
+    type report struct {
+        sol         int
+        temperature temperature
+        location    location
+    }
+
+    type temperature struct {
+        high, low celsius
+    }
+
+    type location struct {
+        lat, long float64
+    }
+
+    type celsius float64
+```
+
+### Forwarding methods
+Go will do method forwarding for you with struct embedding. To embed a type in a structure, specify the type without a field name.
+```go
+    type report struct {
+        sol         int
+        temperature
+        location
+    }
+```
+All the methods on the temperature type are automatically made accessible through the report type.
+```go
+    func (t temperature) average() celsius {
+        return (t.high + t.low) / 2
+    }
+    report := report{
+        sol:         15,
+        location:    location{-4.5895, 137.4417},
+        temperature: temperature{high: -1.0, low: -78.0},
+    }
+
+    fmt.Printf("average %v° C\n", report.average()) // Prints average -39.5° C
+```
+Embedding doesn’t only forward methods. Fields of an inner structure are accessible from the outer structure. In addition to **report.temperature.high**, you can access the high temperature with **report.high** as follows:
+```go
+    fmt.Printf("%v° C\n", report.high) // Prints -1° C
+    report.high = 32
+    fmt.Printf("%v° C\n", report.temperature.high) // Prints 32° C
+```
+
+### Name collisions
+If multiple embedded types implement a method of the same name, The Go compiler only reports an error if the method is being used.
+
+### Inheritance vs Composition
+Inheritance is a different way of thinking about designing software. With inheritance, a rover is a type of vehicle and thereby inherits the functionality that all vehicles share. With composition, a rover has an engine and wheels and various other parts that provide the functionality a rover needs. A truck may reuse several of those parts, but there is no vehicle type or hierarchy descending from it.</br></br>
+Composition is generally considered more flexible, allowing greater reuse and easier changes than software built with inheritance.
+> Favor object composition over class inheritance.
+>
+> -- <cite>Gang of Four, Design Patterns: Elements of Reusable Object-Oriented Software</cite>
+
+> Use of classical inheritance is always optional; every problem that it solves can be solved another way.
+>
+> -- <cite>Sandi Metz, Practical Object-Oriented Design in Ruby</cite>
+
+## [Chapter-24] Interfaces
+Typically interfaces are declared as named types that can be reused. There’s a convention of naming interface types with an -er suffix: a talker is anything that talks, as shown in the following listing.
+```go
+    type talker interface {
+        talk() string
+    }
+```
+> Used together, composition and interfaces make a very powerful design tool.
+>
+> -- <cite>Bill Venners, JavaWorld</cite>
+### Discovering the interface
+With Go you can begin implementing your code and discover the interfaces as you go. Any code can implement an interface, even code that already exists.
+
+### Satisfying interfaces
+The standard library exports a number of single-method interfaces that you can implement in your code.
+> Go encourages composition over inheritance, using simple, often one-method interfaces ... that serve as clean, comprehensible boundaries between components.
+>
+> -- <cite>Rob Pike, “Go at Google: Language Design in the Service of Software Engineering”</cite>
+As an example, the fmt package declares a Stringer interface as follows:
+```go
+    type Stringer interface {
+        String() string
+    }
+```
+The following listing provides a String method to control how the fmt package displays a location.
+```go
+    package main
+
+    import "fmt"
+
+    // location with a latitude, longitude in decimal degrees.
+    type location struct {
+        lat, long float64
+    }
+
+    // String formats a location with latitude, longitude.
+    func (l location) String() string {
+        return fmt.Sprintf("%v, %v", l.lat, l.long)
+    }
+
+    func main() {
+        curiosity := location{-4.5895, 137.4417}
+        fmt.Println(curiosity) // Prints -4.5895, 137.4417
+    }
+```
+
